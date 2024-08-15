@@ -6,7 +6,7 @@ const companySchema = new mongoose.Schema({
   },
   recruiters: [{
     recruiterId: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'Recruiter'
     },
     position: {

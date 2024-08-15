@@ -2,7 +2,12 @@ require('dotenv').config()
 const mongoose = require('mongoose')
 const PORT = process.env.SERVER_PORT || 5000
 const express = require('express')
+const authRoutes = require('./routes/authRoutes')
 const app = express()
+
+// Middleware
+app.use(express.json())
+app.use('/api', authRoutes)
 
 
 // Database connection

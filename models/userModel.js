@@ -31,11 +31,11 @@ const userSchema = new mongoose.Schema({
 
 const adminSchema = new mongoose.Schema({
   managedStudents: [{
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'Student'
   }],
   managedRecruiters:[{
-    type:Schema.Types.ObjectId,
+    type:mongoose.Schema.Types.ObjectId,
     ref: 'Recruiter'
   }]
 })
@@ -45,7 +45,7 @@ const studentSchema = new mongoose.Schema({
     bio: String,
     skills:[String],
     projects:[{
-      type:Schema.Types.ObjectId,
+      type:mongoose.Schema.Types.ObjectId,
       ref: 'Project'
     }]
   }
@@ -57,12 +57,12 @@ const recruiterSchema = new mongoose.Schema({
     default: false
   },
   requests: [{
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'Student'
   }],
   company: {
     companyId: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'Company'
     },
     position: {
