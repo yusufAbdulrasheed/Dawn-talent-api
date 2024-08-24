@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
     // default: 0 //0 -> Recruiter, 1 -> Admin, 2 -> Student
       type: String,
       enum: ['admin', 'student', 'recruiter'],
-      required: true
+      default: 'recruiter',
   }
 
 }, { discriminatorKey: 'role' })
@@ -35,7 +35,7 @@ const adminSchema = new mongoose.Schema({
     ref: 'Student'
   }],
   managedRecruiters:[{
-    type:mongoose.Schema.Types.ObjectId,
+    type:mongoose.Schema.Types.ObjectId, 
     ref: 'Recruiter'
   }]
 })

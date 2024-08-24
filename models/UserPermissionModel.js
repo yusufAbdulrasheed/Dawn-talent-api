@@ -1,10 +1,9 @@
-
 const mongoose = require('mongoose');
 
-const PermissionSchema = new mongoose.Schema({
-  permission_name: {
-    type: String,
-    enum: ['admin', 'student', 'recruiter'],
+const UserPermissionSchema = new mongoose.Schema({
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
     required: true
   },
   resource: {
@@ -30,4 +29,4 @@ const PermissionSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model('Permission', PermissionSchema);
+module.exports = mongoose.model('UserPermission', UserPermissionSchema);
