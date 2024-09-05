@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken')
 
 const bcrypt = require('bcryptjs')
 
+// Registration Controller
 const registerUser = async(req, res)=>{
   try{
     const errors = validationResult(req)
@@ -59,6 +60,7 @@ const generateAccessToken = async(user) =>{
   return token
 }
 
+// Login Controller
 const loginUser = async(req, res)=>{
   try{
     const errors = validationResult(req)
@@ -108,7 +110,30 @@ const loginUser = async(req, res)=>{
   }
 }
 
+const getProfile = async (req, res) =>{
+  try{ 
+
+    const user_id = req.user._id 
+    const userData = await User.findOne({ _id: user_id })
+    return res.status(200).json({
+      success: true,
+      msg: 'Profile',
+      data: userData
+    })
+  }
+
+  catch(error){
+    return res.status(400).json({
+      success: false,
+      msg:error.message
+    })
+
+  }
+}
+
+
 module.exports = {
   registerUser,
-  loginUser
+  loginUser,
+  getProfile
 }
