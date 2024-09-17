@@ -31,7 +31,17 @@ const swaggerDocumentation = {
     "/api/register": {
       post:{
         tags:["Authentication API"],
-        description: "Register User"
+        description: "Register User",
+        responses:{
+          201:{
+            description: "User Registered Successfully",
+            content: {
+              "application/json":{
+                type:
+              }
+            }
+          }
+        }
       }
     }
   }
