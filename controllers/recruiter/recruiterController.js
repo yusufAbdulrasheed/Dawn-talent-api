@@ -1,90 +1,210 @@
-const Recruiter = require('../../models/userModel').Recruiter;
+const { Recruiter } = require('../../models/userModel');
+const { Student } = require('../../models/userModel');
 const Company = require('../../models/companyModel');
-const { validationResult } = require('express-validator');
-const cloudinary = require('../../helpers/cloudinary');
+const mongoose = require('mongoose');
 
-// Get Recruiter Profile
-const getRecruiterProfile = async (req, res) => {
+const CreateCompany = async (req, res) => {
   try {
-    const recruiter = await Recruiter.findById(req.user.id).populate('company.companyId');
-    if (!recruiter) {
-      return res.status(404).json({ success: false, msg: 'Profile not found' });
-    }
-    res.status(200).json({ success: true, data: recruiter });
-  } catch (error) {
-    res.status(500).json({ success: false, msg: error.message });
-  }
-};
+    const recruiterId = req.user._id; 
+    const { companyName, position } = req.body;
 
-// Create Recruiter Profile and Add Company Details
-const createRecruiterProfile = async (req, res) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ success: false, errors: errors.array() });
+    if (!companyName || !position) {
+      return res.status(400).json({ message: 'Company name and position are required.' });
     }
 
-    const { name, position, companyName } = req.body;
-
-    // Handle media upload if file is present
-    let media = null;
-    if (req.files && req.files.media) {
-      const uploadResult = await cloudinary.uploader.upload(req.files.media.path);
-      media = uploadResult.secure_url;
+    const recruiter = await Recruiter.findById(recruiterId);
+    if (recruiter.company && recruiter.company.companyId) {
+      return res.status(400).json({ message: 'You have already been assigned to a company.' });
     }
 
-    // Check if company already exists
     let company = await Company.findOne({ name: companyName });
-    if (!company) {
-      // Create a new company if it doesn't exist
-      company = new Company({ name: companyName });
+
+    if (company) {
+  
+      const alreadyExists = company.recruiters.some(r => r.recruiterId.toString() === recruiterId.toString());
+
+      if (!alreadyExists) {
+        company.recruiters.push({ recruiterId, position });
+        await company.save();
+      }
+
+    } else {
+      
+      company = new Company({
+        name: companyName,
+        recruiters: [{ recruiterId, position }]
+      });
       await company.save();
     }
 
-    // Create recruiter profile
-    const recruiter = new Recruiter({
-      name,
-      position,
-      media,
-      company: { companyId: company._id, position }
-    });
+    recruiter.company = {
+      companyId: company._id,
+      position
+    };
     await recruiter.save();
 
-    // Add recruiter to the company's recruiters list
-    company.recruiters.push({ recruiterId: recruiter._id, position });
-    await company.save();
+    res.status(201).json({
+      message: 'Company successfully assigned to recruiter.',
+      company,
+      recruiter
+    });
 
-    res.status(201).json({ success: true, data: recruiter });
   } catch (error) {
-    res.status(500).json({ success: false, msg: error.message });
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error.', error: error.message });
   }
 };
 
-// Update Recruiter Profile
+const getRecruiterProfile = async (req, res) => {
+  try {
+    const recruiterId = req.user._id; 
+  
+    const recruiter = await Recruiter.findById(recruiterId)
+      .populate({
+        path: 'company.companyId',
+        select: 'name'
+      })
+      .populate({
+        path: 'requests',
+        select: 'name email profile',
+        populate: {
+          path: 'profile.projects',
+          model: 'Project',
+        }
+      });
+
+    if (!recruiter) {
+      return res.status(404).json({ message: 'Recruiter not found' });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        recruiterProfile: {
+          _id: recruiter._id,
+          name: recruiter.name,
+          email: recruiter.email,
+          approved: recruiter.approved,
+          company: recruiter.company,
+        },
+        requestedStudents: recruiter.requests,
+      }
+    });
+
+  } catch (error) {
+    console.error('Error fetching recruiter profile:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
+const viewAllStudents = async (req, res) => {
+  try {
+    const students = await Student.find({})
+      .select('name email profile');
+
+    res.status(200).json({
+      success: true,
+      data: students
+    });
+  } catch (error) {
+    console.error('Error fetching students:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
+const viewStudentProfile = async (req, res) => {
+  try {
+    const studentId = req.params.id;
+    const student = await Student.findById(studentId)
+      .select('name email profile');
+
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: student
+    });
+  } catch (error) {
+    console.error('Error fetching student profile:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 const updateRecruiterProfile = async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ success: false, errors: errors.array() });
+    const recruiterId = req.user._id;
+    const { name, email, position } = req.body;
+
+    const recruiter = await Recruiter.findById(recruiterId);
+    if (!recruiter) {
+      return res.status(404).json({ message: 'Recruiter not found' });
     }
 
-    const updateData = req.body;
+    if (name) recruiter.name = name;
+    if (email) recruiter.email = email;
+    if (position && recruiter.company) recruiter.company.position = position;
 
-    // If media is being updated
-    if (req.files) {
-      const uploadResult = await cloudinary.uploader.upload(req.files.media.path);
-      updateData.media = uploadResult.secure_url;
-    }
+    await recruiter.save();
 
-    const recruiter = await Recruiter.findByIdAndUpdate(req.user.id, updateData, { new: true });
-    res.status(200).json({ success: true, data: recruiter });
+    res.status(200).json({
+      success: true,
+      message: 'Profile updated successfully',
+      data: recruiter
+    });
   } catch (error) {
-    res.status(500).json({ success: false, msg: error.message });
+    console.error('Error updating recruiter profile:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+const requestStudent = async (req, res) => {
+  try {
+    const recruiterId = req.user._id;
+    const { studentId } = req.body;
+
+    if (req.user.role !== 'recruiter') {
+      return res.status(403).json({ message: 'Access denied.' });
+    }
+
+    if (!studentId || !mongoose.Types.ObjectId.isValid(studentId)) {
+      return res.status(400).json({ message: 'Valid Student ID is required.' });
+    }
+
+    const student = await Student.findById(studentId).select('_id');
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found.' });
+    }
+
+    const recruiter = await Recruiter.findById(recruiterId).select('requests');
+    if (!recruiter) {
+      return res.status(404).json({ message: 'Recruiter not found.' });
+    }
+
+    if (recruiter.requests.some(id => id.toString() === studentId)) {
+      return res.status(400).json({ message: 'You have already requested this student.' });
+    }
+
+    recruiter.requests.push(studentId);
+    await recruiter.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Student request sent to admin.',
+      requestedStudent: studentId
+    });
+  } catch (error) {
+    console.error('Error requesting student:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
 module.exports = {
+  CreateCompany,
   getRecruiterProfile,
-  createRecruiterProfile,
-  updateRecruiterProfile
+  viewAllStudents,
+  viewStudentProfile,
+  updateRecruiterProfile,
+  requestStudent
 };

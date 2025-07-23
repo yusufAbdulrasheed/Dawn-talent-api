@@ -17,7 +17,7 @@ const projectSchema = new mongoose.Schema({
     type: [String],
     required: true
   },
-  role: {
+  stack: {
     type: String,
     required: true
   },
@@ -52,7 +52,8 @@ const projectSchema = new mongoose.Schema({
       type: String,
       required: false
     }
-  }
+  },
+
 })
 
 module.exports = mongoose.model('Project', projectSchema)

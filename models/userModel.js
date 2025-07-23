@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
-const Project = require('./projectModel')
-const Company = require('./companyModel')
+// const Project = require('./projectModel')
+// const Company = require('./companyModel')
 
 const userSchema = new mongoose.Schema({
 
@@ -20,8 +20,6 @@ const userSchema = new mongoose.Schema({
   },
 
   role:{
-    // type: Number,
-    // default: 0 //0 -> Recruiter, 1 -> Admin, 2 -> Student
       type: String,
       enum: ['admin', 'student', 'recruiter'],
       default: 'recruiter',
@@ -32,11 +30,11 @@ const userSchema = new mongoose.Schema({
 const adminSchema = new mongoose.Schema({
   managedStudents: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Student'
+    ref: 'User'
   }],
   managedRecruiters:[{
     type:mongoose.Schema.Types.ObjectId, 
-    ref: 'Recruiter'
+    ref: 'User'
   }]
 })
 
@@ -58,7 +56,7 @@ const recruiterSchema = new mongoose.Schema({
   },
   requests: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Student'
+    ref: 'User'
   }],
   company: {
     companyId: {
@@ -74,9 +72,9 @@ const recruiterSchema = new mongoose.Schema({
 
 
 const User = mongoose.model('User', userSchema)
-const Admin = User.discriminator('Admin', adminSchema)
-const Student = User.discriminator('Student', studentSchema)
-const Recruiter = User.discriminator('Recruiter', recruiterSchema)
+const Admin = User.discriminator('admin', adminSchema)
+const Student = User.discriminator('student', studentSchema)
+const Recruiter = User.discriminator('recruiter', recruiterSchema)
 
 module.exports = {
   User,
