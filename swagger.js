@@ -12,6 +12,20 @@ const options = {
     servers: [
       { url: 'http://localhost:5000' }
     ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ], 
   },
   apis: ['./routes/*.js'], // Path to your route files
 };
