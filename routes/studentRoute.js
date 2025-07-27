@@ -7,7 +7,7 @@ const auth = require('../middlewares/authMiddleware')
 
 /**
  * @swagger
- * /profile:
+ * /student/profile:
  *   get:
  *     summary: Get the authenticated student's profile
  *     tags: [Students]
@@ -23,7 +23,7 @@ router.get('/profile', auth, studentController.getProfile);
 
 /**
  * @swagger
- * /view-recruiters:
+ * /student/view-recruiters:
  *   get:
  *     summary: Get all recruiters
  *     tags: [Students]
@@ -39,7 +39,7 @@ router.get('/view-recruiters', auth, studentController.viewAllRecruiters);
 
 /**
  * @swagger
- * /view-recruiter-profile/{id}:
+ * /student/view-recruiter-profile/{id}:
  *   get:
  *     summary: Get a specific recruiter profile by ID
  *     tags: [Students]
@@ -62,7 +62,7 @@ router.get('/view-recruiter-profile/:id', auth, studentController.viewRecruiterP
 
 /**
  * @swagger
- * /view-students:
+ * /student/view-students:
  *   get:
  *     summary: Get all other students except the authenticated one
  *     tags: [Students]
@@ -78,7 +78,7 @@ router.get('/view-students', auth, studentController.viewAllStudents);
 
 /**
  * @swagger
- * /update-profile:
+ * /student/update-profile:
  *   put:
  *     summary: Update the authenticated student's profile
  *     tags: [Students]
