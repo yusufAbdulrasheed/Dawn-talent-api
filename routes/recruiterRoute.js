@@ -6,7 +6,7 @@ const recruiterController = require('../controllers/recruiter/recruiterControlle
 
 /**
  * @swagger
- * /create-profile:
+ * /recruiter/create-profile:
  *   post:
  *     summary: Create or assign a company profile for the recruiter
  *     tags: [Recruiters]
@@ -33,7 +33,7 @@ router.post('/create-profile', auth, recruiterController.CreateCompany);
 
 /**
  * @swagger
- * /request-student:
+ * /recruiter/request-student:
  *   post:
  *     summary: Request a student from the admin
  *     tags: [Recruiters]
@@ -60,7 +60,7 @@ router.post('/request-student', auth, recruiterController.requestStudent);
 
 /**
  * @swagger
- * /edit-profile:
+ * /recruiter/edit-profile:
  *   put:
  *     summary: Update recruiter profile
  *     tags: [Recruiters]
@@ -89,7 +89,7 @@ router.put('/edit-profile', auth, recruiterController.updateRecruiterProfile);
 
 /**
  * @swagger
- * /profile:
+ * /recruiter/profile:
  *   get:
  *     summary: Get the authenticated recruiter's profile
  *     tags: [Recruiters]
@@ -105,7 +105,7 @@ router.get('/profile', auth, recruiterController.getRecruiterProfile);
 
 /**
  * @swagger
- * /all-students:
+ * /recruiter/all-students:
  *   get:
  *     summary: View all students
  *     tags: [Recruiters]
@@ -121,7 +121,7 @@ router.get('/all-students', auth, recruiterController.viewAllStudents);
 
 /**
  * @swagger
- * /view-studentProfile/{id}:
+ * /recruiter/view-studentProfile/{id}:
  *   get:
  *     summary: View a particular student profile by ID
  *     tags: [Recruiters]
