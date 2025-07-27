@@ -8,7 +8,7 @@ const adminController = require('../controllers/admin/adminController');
 
 /**
  * @swagger
- * /approve-request:
+ * /admin/approve-request:
  *   post:
  *     summary: Approve a recruiter's request for a student
  *     tags: [Admin]
@@ -37,7 +37,7 @@ router.post('/approve-request', auth, adminController.approveRecruiterStudentReq
 
 /**
  * @swagger
- * /approve-recruiter-profile:
+ * /admin/approve-recruiter-profile:
  *   post:
  *     summary: Approve a recruiter profile
  *     tags: [Admin]
@@ -64,7 +64,7 @@ router.post('/approve-recruiter-profile', auth, adminController.approveRecruiter
 
 /**
  * @swagger
- * /view-recruiter:
+ * /admin/view-recruiter:
  *   get:
  *     summary: View all recruiters
  *     tags: [Admin]
@@ -80,7 +80,7 @@ router.get('/view-recruiter', auth, adminController.getAllRecruiters);
 
 /**
  * @swagger
- * /view-recruiter-profile/{id}:
+ * /admin/view-recruiter-profile/{id}:
  *   get:
  *     summary: View a particular recruiter profile by ID
  *     tags: [Admin]
@@ -103,7 +103,7 @@ router.get('/view-recruiter-profile/:id', auth, adminController.getRecruiter);
 
 /**
  * @swagger
- * /disable-recruiter:
+ * /admin/disable-recruiter:
  *   delete:
  *     summary: Disable a recruiter profile
  *     tags: [Admin]
@@ -130,7 +130,7 @@ router.delete('/disable-recruiter', auth, adminController.disableRecruiterProfil
 
 /**
  * @swagger
- * /createstudents:
+ * /admin/createstudents:
  *   post:
  *     summary: Create a new student
  *     tags: [Admin]
@@ -159,7 +159,7 @@ router.post('/createstudents',auth, adminController.createStudent);
 
 /**
  * @swagger
- * /getstudent/{id}:
+ * /admin/getstudent/{id}:
  *   get:
  *     summary: Get a student by ID
  *     tags: [Admin]
@@ -182,7 +182,7 @@ router.get('/getstudent/:id', auth, adminController.getStudent);
 
 /**
  * @swagger
- * /getallstudents:
+ * /admin/getallstudents:
  *   get:
  *     summary: Get all students
  *     tags: [Admin]
@@ -198,7 +198,7 @@ router.get('/getallstudents', auth, adminController.getAllStudents);
 
 /**
  * @swagger
- * /deletestudent/{id}:
+ * /admin/deletestudent/{id}:
  *   delete:
  *     summary: Delete a student by ID
  *     tags: [Admin]
@@ -221,7 +221,7 @@ router.delete('/deletestudent/:id', auth, adminController.deleteStudentById);
 
 /**
  * @swagger
- * /deletestudents:
+ * /admin/deletestudents:
  *   delete:
  *     summary: Delete all students
  *     tags: [Admin]
